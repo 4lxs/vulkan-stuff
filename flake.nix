@@ -39,14 +39,24 @@
           nativeBuildInputs = with pkgs; [
             mcc-hook
 
-            ncurses
             cmake
             gnumake
+
+            vulkan-headers
+            vulkan-loader
+            vulkan-validation-layers
+            libGLU
+
+            glfw
+            glm
+            shaderc
           ];
 
           buildInputs = with pkgs; [
             fmt
           ];
+
+          LD_LIBRARY_PATH = "${pkgs.glfw}/lib:${pkgs.freetype}/lib:${pkgs.vulkan-loader}/lib:${pkgs.vulkan-validation-layers}/lib";
 
           src = builtins.path {
             path = ./.;
@@ -59,7 +69,52 @@
           ];
         });
         devShells.default = (pkgs.mkShell.override {stdenv = mcc-env;}) {
-          nativeBuildInputs = [config.formatter];
+          buildInputs = [
+            pkgs.cmake
+            pkgs.gcc
+            pkgs.mesa
+            pkgs.vulkan-headers
+            pkgs.vulkan-loader
+            pkgs.vulkan-tools
+            pkgs.vulkan-validation-layers
+            pkgs.shaderc
+            pkgs.shaderc.bin
+            pkgs.shaderc.static
+            pkgs.shaderc.dev
+            pkgs.shaderc.lib
+            #pkgs.glslang
+            pkgs.glfw
+            pkgs.glm
+            pkgs.libGLU
+            pkgs.python3
+            pkgs.xorg.libX11
+            pkgs.xorg.libXcursor
+            pkgs.xorg.libXrandr
+            pkgs.xorg.libXinerama
+            pkgs.xorg.libXi
+            pkgs.xorg.libXext
+            pkgs.xorg.libXrender
+            pkgs.xorg.libXxf86vm
+            pkgs.xorg.libXdmcp
+            pkgs.xorg.libXau
+            pkgs.xorg.libxcb
+            pkgs.gnutls
+            pkgs.xorg.libpthreadstubs
+            pkgs.llvm_15
+            pkgs.clang_15
+            pkgs.pkg-config
+
+            pkgs.fmt
+            pkgs.imgui
+            pkgs.glm
+            pkgs.tinyobjloader
+            pkgs.stb
+            pkgs.glslang
+          ];
+
+          LD_LIBRARY_PATH = "${pkgs.vulkan-loader}/lib:${pkgs.shaderc.lib}/lib:${pkgs.shaderc.dev}/lib";
+          VK_LAYER_PATH = "${pkgs.vulkan-validation-layers}/share/vulkan/explicit_layer.d";
+          VULKAN_LIB_DIR = "${pkgs.shaderc.dev}/lib";
         };
         formatter = pkgs.alejandra;
       };
