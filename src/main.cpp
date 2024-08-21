@@ -104,7 +104,9 @@ private:
     VkFence inFlightFence;
 
     void initWindow() {
-        glfwInit();
+        if (!glfwInit()) {
+            throw std::runtime_error("failed to initialize GLFW!");
+        }
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);

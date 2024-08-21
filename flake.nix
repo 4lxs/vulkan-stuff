@@ -110,6 +110,8 @@
             pkgs.tinyobjloader
             pkgs.stb
             pkgs.glslang
+            pkgs.cmake-lint
+            pkgs.cmake-format
           ];
 
           LD_LIBRARY_PATH = "${pkgs.vulkan-loader}/lib:${pkgs.shaderc.lib}/lib:${pkgs.shaderc.dev}/lib";
