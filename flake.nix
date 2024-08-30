@@ -40,6 +40,7 @@
             mcc-hook
 
             cmake
+            ninja
             gnumake
 
             vulkan-headers
@@ -70,23 +71,22 @@
         });
         devShells.default = (pkgs.mkShell.override {stdenv = mcc-env;}) {
           buildInputs = [
+            pkgs.ninja
             pkgs.cmake
             pkgs.gcc
             pkgs.mesa
+
             pkgs.vulkan-headers
             pkgs.vulkan-loader
             pkgs.vulkan-tools
             pkgs.vulkan-validation-layers
+            pkgs.vulkan-utility-libraries
             pkgs.shaderc
             pkgs.shaderc.bin
             pkgs.shaderc.static
             pkgs.shaderc.dev
             pkgs.shaderc.lib
-            #pkgs.glslang
-            pkgs.glfw
-            pkgs.glm
-            pkgs.libGLU
-            pkgs.python3
+
             pkgs.xorg.libX11
             pkgs.xorg.libXcursor
             pkgs.xorg.libXrandr
@@ -98,12 +98,9 @@
             pkgs.xorg.libXdmcp
             pkgs.xorg.libXau
             pkgs.xorg.libxcb
-            pkgs.gnutls
-            pkgs.xorg.libpthreadstubs
-            pkgs.llvm_15
-            pkgs.clang_15
             pkgs.pkg-config
 
+            pkgs.SDL2
             pkgs.fmt
             pkgs.imgui
             pkgs.glm
