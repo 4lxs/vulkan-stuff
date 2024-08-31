@@ -1,5 +1,3 @@
-include(cmake/SystemLink.cmake)
-include(cmake/LibFuzzer.cmake)
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
 
@@ -20,21 +18,10 @@ macro(myproject_supports_sanitizers)
 endmacro()
 
 macro(myproject_setup_options)
-  option(myproject_ENABLE_HARDENING "Enable hardening" ON)
-  option(myproject_ENABLE_COVERAGE "Enable coverage reporting" OFF)
-  cmake_dependent_option(
-    myproject_ENABLE_GLOBAL_HARDENING
-    "Attempt to push hardening options to built dependencies"
-    ON
-    myproject_ENABLE_HARDENING
-    OFF)
-
   myproject_supports_sanitizers()
 
   if(NOT PROJECT_IS_TOP_LEVEL OR myproject_PACKAGING_MAINTAINER_MODE)
-    option(myproject_ENABLE_IPO "Enable IPO/LTO" OFF)
     option(myproject_WARNINGS_AS_ERRORS "Treat Warnings As Errors" OFF)
-    option(myproject_ENABLE_USER_LINKER "Enable user-selected linker" OFF)
     option(myproject_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" OFF)
     option(myproject_ENABLE_SANITIZER_LEAK "Enable leak sanitizer" OFF)
     option(myproject_ENABLE_SANITIZER_UNDEFINED "Enable undefined sanitizer"
@@ -47,9 +34,7 @@ macro(myproject_setup_options)
     option(myproject_ENABLE_PCH "Enable precompiled headers" OFF)
     option(myproject_ENABLE_CACHE "Enable ccache" OFF)
   else()
-    option(myproject_ENABLE_IPO "Enable IPO/LTO" ON)
     option(myproject_WARNINGS_AS_ERRORS "Treat Warnings As Errors" ON)
-    option(myproject_ENABLE_USER_LINKER "Enable user-selected linker" OFF)
     option(myproject_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer"
            ${SUPPORTS_ASAN})
     option(myproject_ENABLE_SANITIZER_LEAK "Enable leak sanitizer" OFF)
@@ -66,9 +51,7 @@ macro(myproject_setup_options)
 
   if(NOT PROJECT_IS_TOP_LEVEL)
     mark_as_advanced(
-      myproject_ENABLE_IPO
       myproject_WARNINGS_AS_ERRORS
-      myproject_ENABLE_USER_LINKER
       myproject_ENABLE_SANITIZER_ADDRESS
       myproject_ENABLE_SANITIZER_LEAK
       myproject_ENABLE_SANITIZER_UNDEFINED
@@ -77,51 +60,13 @@ macro(myproject_setup_options)
       myproject_ENABLE_UNITY_BUILD
       myproject_ENABLE_CLANG_TIDY
       myproject_ENABLE_CPPCHECK
-      myproject_ENABLE_COVERAGE
       myproject_ENABLE_PCH
       myproject_ENABLE_CACHE)
   endif()
-
-  myproject_check_libfuzzer_support(LIBFUZZER_SUPPORTED)
-  if(LIBFUZZER_SUPPORTED
-     AND (myproject_ENABLE_SANITIZER_ADDRESS
-          OR myproject_ENABLE_SANITIZER_THREAD
-          OR myproject_ENABLE_SANITIZER_UNDEFINED))
-    set(DEFAULT_FUZZER ON)
-  else()
-    set(DEFAULT_FUZZER OFF)
-  endif()
-
-  option(myproject_BUILD_FUZZ_TESTS "Enable fuzz testing executable"
-         ${DEFAULT_FUZZER})
-
 endmacro()
 
 macro(myproject_global_options)
-  if(myproject_ENABLE_IPO)
-    include(cmake/InterproceduralOptimization.cmake)
-    myproject_enable_ipo()
-  endif()
-
   myproject_supports_sanitizers()
-
-  if(myproject_ENABLE_HARDENING AND myproject_ENABLE_GLOBAL_HARDENING)
-    include(cmake/Hardening.cmake)
-    if(NOT SUPPORTS_UBSAN
-       OR myproject_ENABLE_SANITIZER_UNDEFINED
-       OR myproject_ENABLE_SANITIZER_ADDRESS
-       OR myproject_ENABLE_SANITIZER_THREAD
-       OR myproject_ENABLE_SANITIZER_LEAK)
-      set(ENABLE_UBSAN_MINIMAL_RUNTIME FALSE)
-    else()
-      set(ENABLE_UBSAN_MINIMAL_RUNTIME TRUE)
-    endif()
-    message(
-      "${myproject_ENABLE_HARDENING} ${ENABLE_UBSAN_MINIMAL_RUNTIME} ${myproject_ENABLE_SANITIZER_UNDEFINED}"
-    )
-    myproject_enable_hardening(myproject_options ON
-                               ${ENABLE_UBSAN_MINIMAL_RUNTIME})
-  endif()
 endmacro()
 
 macro(myproject_local_options)
@@ -140,11 +85,6 @@ macro(myproject_local_options)
     ""
     ""
     "")
-
-  if(myproject_ENABLE_USER_LINKER)
-    include(cmake/Linker.cmake)
-    myproject_configure_linker(myproject_options)
-  endif()
 
   include(cmake/Sanitizers.cmake)
   myproject_enable_sanitizers(
@@ -184,32 +124,12 @@ macro(myproject_local_options)
     )
   endif()
 
-  if(myproject_ENABLE_COVERAGE)
-    include(cmake/Tests.cmake)
-    myproject_enable_coverage(myproject_options)
-  endif()
-
   if(myproject_WARNINGS_AS_ERRORS)
     check_cxx_compiler_flag("-Wl,--fatal-warnings" LINKER_FATAL_WARNINGS)
     if(LINKER_FATAL_WARNINGS)
       # This is not working consistently, so disabling for now
       # target_link_options(myproject_options INTERFACE -Wl,--fatal-warnings)
     endif()
-  endif()
-
-  if(myproject_ENABLE_HARDENING AND NOT myproject_ENABLE_GLOBAL_HARDENING)
-    include(cmake/Hardening.cmake)
-    if(NOT SUPPORTS_UBSAN
-       OR myproject_ENABLE_SANITIZER_UNDEFINED
-       OR myproject_ENABLE_SANITIZER_ADDRESS
-       OR myproject_ENABLE_SANITIZER_THREAD
-       OR myproject_ENABLE_SANITIZER_LEAK)
-      set(ENABLE_UBSAN_MINIMAL_RUNTIME FALSE)
-    else()
-      set(ENABLE_UBSAN_MINIMAL_RUNTIME TRUE)
-    endif()
-    myproject_enable_hardening(myproject_options OFF
-                               ${ENABLE_UBSAN_MINIMAL_RUNTIME})
   endif()
 
 endmacro()

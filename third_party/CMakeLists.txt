@@ -4,15 +4,17 @@ project(third_party LANGUAGES C CXX)
 # add_subdirectory(sdl EXCLUDE_FROM_ALL)
 
 # sdl2
-find_package(SDL2 REQUIRED)
 
 # glm
 add_library(glm INTERFACE)
 target_include_directories(glm INTERFACE glm)
 
 target_compile_definitions(
-  glm INTERFACE GLM_FORCE_SWIZZLE GLM_FORCE_RADIANS GLM_FORCE_CTOR_INIT
-                GLM_ENABLE_EXPERIMENTAL)
+  glm
+  INTERFACE GLM_FORCE_SWIZZLE
+            GLM_FORCE_RADIANS
+            GLM_FORCE_CTOR_INIT
+            GLM_ENABLE_EXPERIMENTAL)
 
 # fastgltf
 add_library(fastgltf INTERFACE)

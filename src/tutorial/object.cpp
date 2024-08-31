@@ -31,7 +31,7 @@ void TriangleObject::build_pipeline() {
         "Error when building the triangle fragment shader module");
   }
 
-  fmt::println("Triangle fragment shader succesfully loaded");
+  fmt::print("Triangle fragment shader succesfully loaded\n");
 
   VkShaderModule triangleVertexShader{};
   if (!vkutil::load_shader_module("shaders/colored_triangle.vert.spv",

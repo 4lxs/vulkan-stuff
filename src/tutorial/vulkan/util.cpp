@@ -101,7 +101,7 @@ bool load_shader_module(const char* filePath, VkDevice device,
   std::ifstream file(filePath, std::ios::ate | std::ios::binary);
 
   if (!file.is_open()) {
-    fmt::println("failed to open shader file");
+    fmt::print("failed to open shader file\n");
     return false;
   }
 
@@ -127,7 +127,7 @@ bool load_shader_module(const char* filePath, VkDevice device,
   VkShaderModule shaderModule;
   if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) !=
       VK_SUCCESS) {
-    fmt::println("failed to create shader");
+    fmt::print("failed to create shader\n");
     return false;
   }
   *outShaderModule = shaderModule;
