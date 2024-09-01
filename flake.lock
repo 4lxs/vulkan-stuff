@@ -18,40 +18,6 @@
         "type": "github"
       }
     },
-    "koturNixPkgs": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1717499975,
-        "narHash": "sha256-2CzuoWFvHv8CEgsyFsNGn62hBAQA47PHEiRG57v9iyg=",
-        "owner": "nkoturovic",
-        "repo": "kotur-nixpkgs",
-        "rev": "c8c759d915c2ac55e4a669feb6634cc8e43f1cf1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nkoturovic",
-        "ref": "v0.6.0",
-        "repo": "kotur-nixpkgs",
-        "type": "github"
-      }
-    },
-    "miniCompileCommands": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1689962671,
-        "narHash": "sha256-qPyV3iU8rXhIlHEELAtu2UwXtdZgsWMK9dHySlVa8Jo=",
-        "owner": "danielbarter",
-        "repo": "mini_compile_commands",
-        "rev": "073ad72d27287f3e8073c3ef0c9069223fb2048c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "danielbarter",
-        "ref": "v0.6",
-        "repo": "mini_compile_commands",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1724015816,
@@ -83,8 +49,6 @@
     "root": {
       "inputs": {
         "flake-parts": "flake-parts",
-        "koturNixPkgs": "koturNixPkgs",
-        "miniCompileCommands": "miniCompileCommands",
         "nixpkgs": "nixpkgs",
         "systems": "systems"
       }

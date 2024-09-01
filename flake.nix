@@ -2,21 +2,12 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    miniCompileCommands = {
-      url = "github:danielbarter/mini_compile_commands/v0.6";
-      flake = false;
-    };
-    koturNixPkgs = {
-      url = "github:nkoturovic/kotur-nixpkgs/v0.6.0";
-      flake = false;
-    };
     systems.url = "github:nix-systems/default";
   };
   outputs = {
     self,
     flake-parts,
     systems,
-    miniCompileCommands,
     ...
   } @ inputs:
     flake-parts.lib.mkFlake {inherit inputs;} {
@@ -29,53 +20,24 @@
         config,
         ...
       }: let
-        mcc-env = (pkgs.callPackage miniCompileCommands {}).wrap pkgs.stdenv;
-        mcc-hook = (pkgs.callPackage miniCompileCommands {}).hook;
+        llvm = pkgs.llvmPackages_19;
       in {
-        packages.default = mcc-env.mkDerivation (self: {
-          name = "vulkan";
-          version = "0.0.1";
-
-          nativeBuildInputs = with pkgs; [
-            mcc-hook
-
-            cmake
-            ninja
-            gnumake
-
-            vulkan-headers
-            vulkan-loader
-            vulkan-validation-layers
-            libGLU
-
-            glfw
-            glm
-            shaderc
-          ];
-
-          buildInputs = with pkgs; [
-            fmt
-          ];
-
-          LD_LIBRARY_PATH = "${pkgs.glfw}/lib:${pkgs.freetype}/lib:${pkgs.vulkan-loader}/lib:${pkgs.vulkan-validation-layers}/lib";
-
-          src = builtins.path {
-            path = ./.;
-            filter = path: type:
-              !(pkgs.lib.hasPrefix "." (baseNameOf path));
-          };
-
-          cmakeFlags = [
-            "--no-warn-unused-cli"
-          ];
-        });
-        devShells.default = (pkgs.mkShell.override {stdenv = mcc-env;}) {
-          buildInputs = [
-            pkgs.ninja
+        devShells.default = (pkgs.mkShell.override {inherit (llvm) stdenv;}) {
+          nativeBuildInputs = [
             pkgs.cmake
-            pkgs.gcc
-            pkgs.mesa
+            pkgs.ninja
 
+            # clang-tools must be above stdlib because ... reasons
+            # https://discourse.nixos.org/t/clang-tidy-doesnt-find-stdlib/37641/3
+            llvm.clang-tools
+            llvm.libcxx
+            llvm.libllvm
+          ];
+
+          buildInputs = [
+            pkgs.pkg-config
+
+            pkgs.mesa
             pkgs.vulkan-headers
             pkgs.vulkan-loader
             pkgs.vulkan-tools
@@ -98,7 +60,6 @@
             pkgs.xorg.libXdmcp
             pkgs.xorg.libXau
             pkgs.xorg.libxcb
-            pkgs.pkg-config
 
             pkgs.SDL2
             pkgs.fmt
@@ -108,16 +69,15 @@
             pkgs.stb
             pkgs.glslang
 
-              config.formatter
-
-              pkgs.clang-tools
-              pkgs.cmake-lint
-              pkgs.cmake-format
-              pkgs.doxygen
-              pkgs.ccache
-              pkgs.cppcheck
-              pkgs.include-what-you-use
-              pkgs.cmakeCurses
+            config.formatter
+            pkgs.clang-tools
+            pkgs.cmake-lint
+            pkgs.cmake-format
+            pkgs.doxygen
+            pkgs.ccache
+            pkgs.cppcheck
+            pkgs.include-what-you-use
+            pkgs.cmakeCurses
           ];
 
           LD_LIBRARY_PATH = "${pkgs.vulkan-loader}/lib:${pkgs.shaderc.lib}/lib:${pkgs.shaderc.dev}/lib";

@@ -20,3 +20,5 @@ CheckOptions:
     value: 'x|y|z'
   - key: readability-identifier-length.IgnoredParameterNames
     value: 'x|y|z'
+  - key: cppcoreguidelines-avoid-do-while.IgnoreMacros
+    value: true
