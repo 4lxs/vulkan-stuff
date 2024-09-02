@@ -15,10 +15,6 @@ project(
 include(cmake/PreventInSourceBuilds.cmake)
 include(ProjectOptions.cmake)
 include(Dependencies.cmake)
-
-myproject_setup_options()
-myproject_global_options()
-myproject_setup_dependencies()
 myproject_local_options()
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)

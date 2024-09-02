@@ -62,8 +62,8 @@
             pkgs.xorg.libxcb
 
             pkgs.SDL2
-            pkgs.fmt
-            pkgs.imgui
+            # pkgs.fmt
+            # pkgs.imgui
             pkgs.glm
             pkgs.tinyobjloader
             pkgs.stb

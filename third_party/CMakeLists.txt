@@ -20,12 +20,6 @@ target_compile_definitions(
 add_library(fastgltf INTERFACE)
 target_include_directories(fastgltf INTERFACE fastgltf)
 
-# vulkan
-find_package(Vulkan REQUIRED)
-
-# vma
-add_subdirectory(vma)
-
 # volk
 add_subdirectory(volk EXCLUDE_FROM_ALL)
 
@@ -47,8 +41,8 @@ target_sources(
 
 target_link_libraries(imgui PUBLIC Vulkan::Vulkan SDL2::SDL2)
 
-# fmt
-find_package(fmt REQUIRED)
-
 # vk-bootstrap
 add_subdirectory(vk-bootstrap EXCLUDE_FROM_ALL)
+
+# vma
+# add_subdirectory(vma)
