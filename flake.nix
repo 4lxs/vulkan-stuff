@@ -68,6 +68,13 @@
             pkgs.tinyobjloader
             pkgs.stb
             pkgs.glslang
+            pkgs.wayland
+            pkgs.wayland-scanner
+            pkgs.egl-wayland
+            pkgs.libxkbcommon
+            pkgs.libffi
+            pkgs.gcc
+            pkgs.spirv-headers
 
             config.formatter
             pkgs.clang-tools
@@ -80,7 +87,7 @@
             pkgs.cmakeCurses
           ];
 
-          LD_LIBRARY_PATH = "${pkgs.vulkan-loader}/lib:${pkgs.shaderc.lib}/lib:${pkgs.shaderc.dev}/lib";
+          LD_LIBRARY_PATH = "${pkgs.vulkan-loader}/lib:${pkgs.shaderc.lib}/lib:${pkgs.shaderc.dev}/lib:${pkgs.wayland}/lib:${pkgs.libxkbcommon}/lib:${pkgs.libffi}/lib";
           VK_LAYER_PATH = "${pkgs.vulkan-validation-layers}/share/vulkan/explicit_layer.d";
           VULKAN_LIB_DIR = "${pkgs.shaderc.dev}/lib";
         };
